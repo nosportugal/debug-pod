@@ -2,6 +2,8 @@
 # tooling compatibility reasons
 FROM debian:10-slim
 
+LABEL org.opencontainers.image.source=https://github.com/nosportugal/debug-pod
+
 WORKDIR /root
 
 # use same dpkg path-exclude settings that come by default with ubuntu:focal
@@ -43,7 +45,8 @@ RUN apt-get update -qq && \
                        mtr-tiny \
                        conntrack \
                        llvm-8 llvm-8-tools \
-                       bpftool
+                       bpftool \
+                       nmap
 
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
     add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" && \
