@@ -6,6 +6,7 @@ FROM debian:12-slim
 ARG CRICTL_VERSION="v1.31.1"
 
 LABEL org.opencontainers.image.source=https://github.com/nosportugal/debug-pod
+LABEL org.opencontainers.image.description="A debian image with some debugging tools installed."
 
 WORKDIR /root
 
@@ -61,4 +62,4 @@ RUN echo 'runtime-endpoint: unix:///run/containerd/containerd.sock' >> /etc/cric
 RUN echo 'image-endpoint: unix:///run/containerd/containerd.sock' >> /etc/crictl.yaml
 RUN echo 'timeout: 2' >> /etc/crictl.yaml
 
-CMD [ "/bin/bash" ]
+ENTRYPOINT [ "/bin/bash" ]
