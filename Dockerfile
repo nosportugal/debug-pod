@@ -1,8 +1,9 @@
 # match doks-debug version with DOKS worker node image version for kernel
 # tooling compatibility reasons
-FROM debian:10-slim
+FROM debian:11-slim
 
 LABEL org.opencontainers.image.source=https://github.com/nosportugal/debug-pod
+LABEL org.opencontainers.image.description="A debian image with some debugging tools installed."
 
 WORKDIR /root
 
@@ -44,13 +45,16 @@ RUN apt-get update -qq && \
                        dsniff \
                        mtr-tiny \
                        conntrack \
-                       llvm-8 llvm-8-tools \
                        bpftool \
                        nmap
 
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" && \
+RUN install -m 0755 -d /etc/apt/keyrings && \
+    . /etc/os-release && \
+    curl -fsSL "https://download.docker.com/linux/$ID/gpg" | gpg --dearmor -o "/etc/apt/keyrings/$ID.gpg" && \
+    chmod a+r "/etc/apt/keyrings/$ID.gpg" && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/$ID.gpg] https://download.docker.com/linux/$ID $VERSION_CODENAME stable" | \
+        tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update -qq && \
     apt-get install -y docker-ce
 
-CMD [ "/bin/bash" ]
+ENTRYPOINT [ "/bin/bash" ]
