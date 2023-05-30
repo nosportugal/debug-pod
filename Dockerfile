@@ -5,6 +5,8 @@ FROM debian:12-slim
 # Specify the version of crictl to install
 ARG CRICTL_VERSION="v1.31.1"
 
+LABEL org.opencontainers.image.source=https://github.com/nosportugal/debug-pod
+
 WORKDIR /root
 
 # use same dpkg path-exclude settings that come by default with ubuntu:focal
@@ -46,7 +48,8 @@ RUN apt-get update -qq && \
                        conntrack \
                        llvm-13 llvm-13-tools \
                        wget \
-                       bpftool
+                       bpftool \
+                       nmap
 
 # Install crictl
 RUN wget https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-amd64.tar.gz && \
