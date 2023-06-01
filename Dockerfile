@@ -57,4 +57,10 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
     apt-get update -qq && \
     apt-get install -y docker-ce
 
+# for httpie
+RUN curl -SsL https://packages.httpie.io/deb/KEY.gpg | gpg --dearmor -o /usr/share/keyrings/httpie.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/httpie.gpg] https://packages.httpie.io/deb ./" > /etc/apt/sources.list.d/httpie.list && \
+    apt-get update && \
+    apt-get install -y httpie
+
 ENTRYPOINT [ "/bin/bash" ]
