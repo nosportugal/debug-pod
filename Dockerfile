@@ -62,4 +62,10 @@ RUN echo 'runtime-endpoint: unix:///run/containerd/containerd.sock' >> /etc/cric
 RUN echo 'image-endpoint: unix:///run/containerd/containerd.sock' >> /etc/crictl.yaml
 RUN echo 'timeout: 2' >> /etc/crictl.yaml
 
+# for httpie
+RUN curl -SsL https://packages.httpie.io/deb/KEY.gpg | gpg --dearmor -o /usr/share/keyrings/httpie.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/httpie.gpg] https://packages.httpie.io/deb ./" > /etc/apt/sources.list.d/httpie.list && \
+    apt-get update && \
+    apt-get install -y httpie
+
 ENTRYPOINT [ "/bin/bash" ]
