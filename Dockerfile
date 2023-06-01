@@ -17,7 +17,7 @@ RUN echo 'path-exclude=/usr/share/doc/*' >> /etc/dpkg/dpkg.cfg.d/excludes
 RUN echo 'path-include=/usr/share/doc/*/copyright' >> /etc/dpkg/dpkg.cfg.d/excludes
 RUN echo 'path-include=/usr/share/doc/*/changelog.Debian.*' >> /etc/dpkg/dpkg.cfg.d/excludes
 
-RUN apt-get update -qq && \
+RUN apt-get update && \
     apt-get install -y apt-transport-https \
                        ca-certificates \
                        software-properties-common \
