@@ -46,7 +46,8 @@ RUN apt-get update && \
                        mtr-tiny \
                        conntrack \
                        bpftool \
-                       nmap
+                       nmap \
+                       redis-tools
 
 RUN install -m 0755 -d /etc/apt/keyrings && \
     . /etc/os-release && \
