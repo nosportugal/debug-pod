@@ -50,7 +50,8 @@ RUN apt-get update && \
                        llvm-13 llvm-13-tools \
                        wget \
                        bpftool \
-                       nmap
+                       nmap \
+                       redis-tools
 
 # Install crictl
 RUN wget https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-amd64.tar.gz && \
