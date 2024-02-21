@@ -36,7 +36,7 @@ RUN apt-get update && \
                        traceroute \
                        iputils-ping \
                        net-tools \
-                       netcat \
+                       ncat \
                        iproute2 \
                        strace \
                        telnet \
