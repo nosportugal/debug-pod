@@ -1,6 +1,6 @@
 # match doks-debug version with DOKS worker node image version for kernel
 # tooling compatibility reasons
-FROM debian:11-slim
+FROM debian:testing-slim
 
 LABEL org.opencontainers.image.source=https://github.com/nosportugal/debug-pod
 LABEL org.opencontainers.image.description="A debian image with some debugging tools installed."
