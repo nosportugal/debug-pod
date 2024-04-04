@@ -51,7 +51,8 @@ RUN apt-get update && \
                        wget \
                        bpftool \
                        nmap \
-                       redis-tools
+                       redis-tools \
+                       kafkacat
 
 # Install crictl
 RUN wget https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-amd64.tar.gz && \
