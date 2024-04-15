@@ -69,4 +69,9 @@ RUN curl -SsL https://packages.httpie.io/deb/KEY.gpg | gpg --dearmor -o /usr/sha
 RUN curl -Lv -o /usr/bin/hey https://hey-release.s3.us-east-2.amazonaws.com/hey_linux_amd64 && \
     chmod a+x /usr/bin/hey
 
+# install speedtest cli from 
+# https://www.speedtest.net/apps/cli
+RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash && \
+    apt-get install -y speedtest
+
 ENTRYPOINT [ "/bin/bash" ]
