@@ -47,7 +47,8 @@ RUN apt-get update && \
                        conntrack \
                        bpftool \
                        nmap \
-                       redis-tools
+                       redis-tools \
+                       kafkacat
 
 RUN install -m 0755 -d /etc/apt/keyrings && \
     . /etc/os-release && \
