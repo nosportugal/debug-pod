@@ -125,6 +125,6 @@ RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/scr
     apt-get install -y speedtest
 
 # add httpstat script
-RUN curl -s https://raw.githubusercontent.com/b4b4r07/httpstat/master/httpstat.sh >httpstat.sh && chmod +x httpstat.sh
+RUN curl -s https://raw.githubusercontent.com/b4b4r07/httpstat/master/httpstat.sh >/usr/bin/httpstat && chmod a+x /usr/bin/httpstat
 
 ENTRYPOINT [ "/bin/bash" ]
