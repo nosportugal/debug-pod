@@ -6,12 +6,14 @@ LABEL maintainer="Yury Muski <muski.yury@gmail.com>"
 WORKDIR /opt
 
 ARG CURL_VERSION=curl-8_2_1
+# https://github.com/curl/curl/blob/master/docs/HTTP3.md#quiche-version
 ARG QUICHE_VERSION=0.18.0
 
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git autoconf libtool cmake golang-go curl libnghttp2-dev zlib1g-dev;
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get full-upgrade --auto-remove --purge -y && \
+    apt-get install -y build-essential git autoconf libtool cmake golang-go curl libnghttp2-dev zlib1g-dev;
 
-# https://github.com/curl/curl/blob/master/docs/HTTP3.md#quiche-version
 
 # install rust & cargo
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y -q;
@@ -25,7 +27,6 @@ RUN export PATH="$HOME/.cargo/bin:$PATH" && \
     cargo build --package quiche --release --features ffi,pkg-config-meta,qlog && \
     mkdir quiche/deps/boringssl/src/lib && \
     ln -vnf $(find target/release -name libcrypto.a -o -name libssl.a) quiche/deps/boringssl/src/lib/
-
 
 # add curl
 RUN git clone https://github.com/curl/curl
@@ -56,7 +57,9 @@ RUN echo 'path-include=/usr/share/doc/*/changelog.Debian.*' > /etc/dpkg/dpkg.cfg
 
 RUN echo 'deb http://deb.debian.org/debian bullseye-backports main' > /etc/apt/sources.list.d/backports.list
 
-RUN apt-get update && \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get full-upgrade --auto-remove --purge -y && \
     apt-get install -y \
         apt-transport-https \
         ca-certificates \
