@@ -1,37 +1,36 @@
-A Docker image with Kubernetes manifests for investigation and troubleshooting your cluster.
+# The ultimate debug pod
+
+A Docker image with Kubernetes toolink for investigation and troubleshooting your cluster.
 
 ![main build](https://github.com/digitalocean/doks-debug/actions/workflows/test.yaml/badge.svg) ![main release](https://github.com/digitalocean/doks-debug/actions/workflows/release.yaml/badge.svg)
 
-# Purpose
+## Purpose
 
-The DOKS team provides this image for use as-is and for transparency as the image used when a request to "deploy a debug pod" is made to our customers, which may occur when deeper investigation is needed with direct access to a cluster.
+This is an image based on the DOKS team's pod, full of tooling to make diagnostics and tests inside a container/kubernetes pod.
 
-# Usage
+This way you won't have to install a bunch of tooling on your pods.
 
-```bash
-kubectl apply -f k8s/daemonset.yaml
-```
+## Usage
 
-This DaemonSet manifest will:
-
- 1. Ensure a pod with our Docker image is running indefinitely on every node.
- 2. Use `hostPID`, `hostIPC`, and `hostNetwork`.
- 3. Mount the entire host filesystem to `/host` in the containers.
- 4. Mount `/var/run/docker.sock` from the host.
-
-In order to make use of these workloads, you can exec into a pod of choice by name:
+The easiest way to start a pod in the current context and namespace is:
 
 ```bash
-kubectl -n kube-system exec -it my-pod-name bash
+kubectl run --rm -it debug-pod --pod-running-timeout 300 --image=ghcr.io/nosportugal/debug-pod:master
 ```
 
-If you know the specific node name that you're interested in, you can exec into the debug pod on that node with:
+You can also have at hand this nice alias:
 
 ```bash
-NODE_NAME="my-node-name"
-POD_NAME=$(kubectl -n kube-system get pods --field-selector spec.nodeName=${NODE_NAME} -ojsonpath='{.items[0].metadata.name}')
-kubectl -n kube-system exec -it ${POD_NAME} bash
+alias debug-pod='kubectl run --rm -it debug-pod --pod-running-timeout 300 --image=ghcr.io/nosportugal/debug-pod:master'
 ```
+
+Then you can do stuff from anywhere. The most useful example that I can think of is:
+
+```bash
+debug-pod --context some-cluster -n some-namespace
+```
+
+## Tooling
 
 Once you're in, you have access to the set of tools listed in the `Dockerfile`. This includes:
 
@@ -51,18 +50,3 @@ Once you're in, you have access to the set of tools listed in the `Dockerfile`. 
  - [`dstat`](http://dag.wiee.rs/home-made/dstat/) - is a versatile replacement for vmstat, iostat, netstat and ifstat. Dstat overcomes some of their limitations and adds some extra features, more counters and flexibility. Dstat is handy for monitoring systems during performance tuning tests, benchmarks or troubleshooting.
  - [`htop`](https://hisham.hm/htop/) - is interactive process viewer for Unix systems.
  - [`atop`](https://www.atoptool.nl/) - is an advanced interactive monitor for Linux-systems to view the load on system-level and process-level.
-
-# Tips and Tricks
-
-## chroot + systemctl
-
-```bash
-chroot /host /bin/bash
-systemctl status kubelet
-journalctl -xe
-journalctl -u kubelet
-```
-
-# Contributing
-
- At DigitalOcean we value and love our community! If you have any issues or would like to contribute, feel free to open an issue or PR and cc any of the maintainers.
