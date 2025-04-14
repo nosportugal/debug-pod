@@ -130,4 +130,7 @@ RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/scr
 # add httpstat script
 RUN curl -s https://raw.githubusercontent.com/b4b4r07/httpstat/master/httpstat.sh >/usr/bin/httpstat && chmod a+x /usr/bin/httpstat
 
+# install AZ cli
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
 ENTRYPOINT [ "/bin/bash" ]
