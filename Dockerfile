@@ -131,6 +131,7 @@ RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/scr
 RUN curl -s https://raw.githubusercontent.com/b4b4r07/httpstat/master/httpstat.sh >/usr/bin/httpstat && chmod a+x /usr/bin/httpstat
 
 # install AZ cli
-RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash && \
+    apt-get install -y azure-cli
 
 ENTRYPOINT [ "/bin/bash" ]
