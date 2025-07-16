@@ -31,8 +31,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     # Limpeza para reduzir tamanho
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-# add httpstat script
-#RUN curl -s https://raw.githubusercontent.com/b4b4r07/httpstat/master/httpstat.sh >/usr/bin/httpstat && chmod a+x /usr/bin/httpstat
 
 # Definir bash como shell padrão
 SHELL ["/bin/bash", "-c"]
