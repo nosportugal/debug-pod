@@ -16,18 +16,12 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         dnsutils \
         iperf3 \
         socat \
-        httping \
         jq \
-        tracepath \
         openssl \
-        dnsutils \
-        atop \
-        htop \
         # Ferramentas de análise
         tcpdump \
         net-tools \
         iproute2 \
-        ss \
         lsof \
         # Utilitários básicos
         vim \
