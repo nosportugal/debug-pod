@@ -2,11 +2,11 @@ FROM debian:12-slim
 
 LABEL maintainer="Slim Debug Pod"
 
-# Instalar ferramentas essenciais de debug de rede
+# Install essential network debugging tools
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-        # Ferramentas de rede básicas
+        # Basic network tools
         curl \
         wget \
         netcat-openbsd \
