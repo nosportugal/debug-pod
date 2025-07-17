@@ -18,22 +18,22 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         socat \
         jq \
         openssl \
-        # Ferramentas de análise
+        # Analysis tools
         tcpdump \
         net-tools \
         iproute2 \
         lsof \
-        # Utilitários básicos
+        # Basic utilities
         vim \
         nano \
         bash \
         procps && \
-    # Limpeza para reduzir tamanho
+    # Cleanup to reduce size
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Definir bash como shell padrão
 SHELL ["/bin/bash", "-c"]
 
-# Manter container rodando para debug
+# Keep container running for debugging
 CMD ["tail", "-f", "/dev/null"]
