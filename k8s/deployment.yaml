@@ -15,7 +15,6 @@ spec:
       labels:
         name: doks-debug
       annotations:
-        clusterlint.digitalocean.com/disabled-checks: "hostpath-volume"
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       dnsPolicy: ClusterFirstWithHostNet
@@ -28,7 +27,7 @@ spec:
       - name: doks-debug
         securityContext:
           privileged: true
-        image: ghcr.io/digitalocean-packages/doks-debug:latest
+        image: ghcr.io/nosportugal/debug-pod:master
         command: [ "sleep", "infinity" ]
         resources:
           requests:
