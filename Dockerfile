@@ -1,49 +1,54 @@
-FROM debian:12 AS builder
+FROM debian:13 AS builder
 
-# this builder part is the work of Yury Muski, from https://github.com/yurymuski/curl-http3
-LABEL maintainer="Yury Muski <muski.yury@gmail.com>"
+# Build curl with HTTP/3 support using ngtcp2 (non-experimental) backend.
+# Debian 13 ships OpenSSL 3.5 which has native QUIC API support for ngtcp2.
+# https://github.com/curl/curl/blob/master/docs/HTTP3.md#ngtcp2-version
 
 WORKDIR /opt
 
-ARG CURL_VERSION=curl-8_2_1
-# https://github.com/curl/curl/blob/master/docs/HTTP3.md#quiche-version
-ARG QUICHE_VERSION=0.18.0
+ARG CURL_VERSION=curl-8_18_0
+ARG NGTCP2_VERSION=v1.20.0
+ARG NGHTTP3_VERSION=v1.15.0
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get full-upgrade --auto-remove --purge -y && \
-    apt-get install -y build-essential git autoconf libtool cmake golang-go curl libnghttp2-dev zlib1g-dev;
+    apt-get install -y build-essential git autoconf libtool pkg-config \
+        libssl-dev libnghttp2-dev zlib1g-dev libpsl-dev;
 
+# Build nghttp3
+RUN git clone -b $NGHTTP3_VERSION https://github.com/ngtcp2/nghttp3 && \
+    cd nghttp3 && \
+    git submodule update --init && \
+    autoreconf -fi && \
+    ./configure --prefix=/usr/local --enable-lib-only && \
+    make && \
+    make install
 
-# install rust & cargo
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y -q;
+# Build ngtcp2 (with system OpenSSL 3.5+)
+RUN git clone -b $NGTCP2_VERSION https://github.com/ngtcp2/ngtcp2 && \
+    cd ngtcp2 && \
+    autoreconf -fi && \
+    ./configure PKG_CONFIG_PATH=/usr/local/lib/pkgconfig \
+        --prefix=/usr/local --enable-lib-only --with-openssl && \
+    make && \
+    make install
 
-RUN git clone --recursive https://github.com/cloudflare/quiche
-
-# build quiche
-RUN export PATH="$HOME/.cargo/bin:$PATH" && \
-    cd quiche && \
-    git checkout $QUICHE_VERSION && \
-    cargo build --package quiche --release --features ffi,pkg-config-meta,qlog && \
-    mkdir quiche/deps/boringssl/src/lib && \
-    ln -vnf $(find target/release -name libcrypto.a -o -name libssl.a) quiche/deps/boringssl/src/lib/
-
-# add curl
-RUN git clone https://github.com/curl/curl
-RUN cd curl && \
+# Build curl with HTTP/3 (ngtcp2 + nghttp3) + HTTP/2 (nghttp2) + TLS (OpenSSL)
+RUN git clone https://github.com/curl/curl && \
+    cd curl && \
     git checkout $CURL_VERSION && \
     autoreconf -fi && \
-    ./configure LDFLAGS="-Wl,-rpath,/opt/quiche/target/release" --with-openssl=/opt/quiche/quiche/deps/boringssl/src --with-quiche=/opt/quiche/target/release --with-nghttp2 --with-zlib && \
+    ./configure PKG_CONFIG_PATH=/usr/local/lib/pkgconfig \
+        --with-openssl --with-nghttp3 --with-ngtcp2 --with-nghttp2 --with-zlib && \
     make && \
-    make DESTDIR="/debian/" install
+    make install
 
 
-# match doks-debug version with DOKS worker node image version for kernel
-# tooling compatibility reasons
-FROM debian:12-slim
+FROM debian:13-slim
 
-# Specify the version of crictl to install
-ARG CRICTL_VERSION="v1.31.1"
+# Specify the version of crictl to install
+ARG CRICTL_VERSION="v1.33.0"
 
 LABEL org.opencontainers.image.source=https://github.com/nosportugal/debug-pod
 LABEL org.opencontainers.image.description="A debian image with some debugging tools installed."
@@ -62,9 +67,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get full-upgrade --auto-remove --purge -y && \
     apt-get install -y \
-        apt-transport-https \
         ca-certificates \
-        software-properties-common \
+        curl \
         httping \
         man \
         man-db \
@@ -73,7 +77,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         gnupg \
         atop \
         htop \
-        dstat \
+        sysstat \
         jq \
         dnsutils \
         tcpdump \
@@ -92,14 +96,14 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         bpftool \
         nmap \
         redis-tools \
-        kafkacat \
+        kcat \
         nghttp2 \
+        libpsl5t64 \
         zlib1g \
         wget && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /debian/usr/local/ /usr/local/
-COPY --from=builder /opt/quiche/target/release /opt/quiche/target/release
+COPY --from=builder /usr/local/ /usr/local/
 
 # Resolve any issues of C-level lib
 # location caches ("shared library cache")
