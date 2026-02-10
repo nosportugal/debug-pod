@@ -22,7 +22,7 @@ RUN git clone -b $NGHTTP3_VERSION https://github.com/ngtcp2/nghttp3 && \
     git submodule update --init && \
     autoreconf -fi && \
     ./configure --prefix=/usr/local --enable-lib-only && \
-    make && \
+    make --jobs=$(nproc) && \
     make install
 
 # Build ngtcp2 (with system OpenSSL 3.5+)
@@ -31,7 +31,7 @@ RUN git clone -b $NGTCP2_VERSION https://github.com/ngtcp2/ngtcp2 && \
     autoreconf -fi && \
     ./configure PKG_CONFIG_PATH=/usr/local/lib/pkgconfig \
         --prefix=/usr/local --enable-lib-only --with-openssl && \
-    make && \
+    make --jobs=$(nproc) && \
     make install
 
 # Build curl with HTTP/3 (ngtcp2 + nghttp3) + HTTP/2 (nghttp2) + TLS (OpenSSL)
@@ -41,7 +41,7 @@ RUN git clone https://github.com/curl/curl && \
     autoreconf -fi && \
     ./configure PKG_CONFIG_PATH=/usr/local/lib/pkgconfig \
         --with-openssl --with-nghttp3 --with-ngtcp2 --with-nghttp2 --with-zlib && \
-    make && \
+    make --jobs=$(nproc) && \
     make install
 
 
