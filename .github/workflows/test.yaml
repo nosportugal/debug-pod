@@ -19,4 +19,4 @@ jobs:
         run: docker build --platform linux/amd64 -t debug-pod .
 
       - name: smoke test
-        run: docker run --rm debug-pod sleep 1
+        run: docker run --rm debug-pod kubectl version --client
