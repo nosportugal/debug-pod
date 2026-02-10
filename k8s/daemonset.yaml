@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: doks-debug
+  name: debug-pod
   namespace: kube-system
   labels:
-    app: doks-debug
+    app: debug-pod
 spec:
   selector:
     matchLabels:
-      name: doks-debug
+      name: debug-pod
   template:
     metadata:
       labels:
-        name: doks-debug
+        name: debug-pod
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
@@ -23,7 +23,7 @@ spec:
       tolerations:
       - operator: Exists
       containers:
-      - name: doks-debug
+      - name: debug-pod
         securityContext:
           privileged: true
         image: ghcr.io/nosportugal/debug-pod:latest
