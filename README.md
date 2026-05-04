@@ -2,7 +2,7 @@
 
 > The ultimate Kubernetes debugging toolkit — a single container image packed with everything you need to investigate, diagnose, and troubleshoot your clusters.
 
-Built on **Debian 13 (Trixie)** with a custom **curl 8.18** compiled with **HTTP/3 (QUIC)** support.
+Built on **Debian 13 (Trixie)** with a custom **curl 8.20** compiled with **HTTP/3 (QUIC)** support.
 
 ## What is this?
 
