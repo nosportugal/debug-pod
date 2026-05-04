@@ -66,7 +66,7 @@ RUN echo 'path-include=/usr/share/doc/*/changelog.Debian.*' >> /etc/dpkg/dpkg.cf
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get full-upgrade --auto-remove --purge -y && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
         httping \
@@ -123,7 +123,7 @@ RUN echo 'timeout: 2' >> /etc/crictl.yaml
 RUN curl -SsL https://packages.httpie.io/deb/KEY.gpg | gpg --dearmor -o /usr/share/keyrings/httpie.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/httpie.gpg] https://packages.httpie.io/deb ./" > /etc/apt/sources.list.d/httpie.list && \
     apt-get update && \
-    apt-get install -y httpie
+    apt-get install -y --no-install-recommends httpie
 
 # for hey 
 RUN curl -Lv -o /usr/bin/hey https://storage.googleapis.com/hey-releases/hey_linux_amd64 && \
@@ -132,13 +132,17 @@ RUN curl -Lv -o /usr/bin/hey https://storage.googleapis.com/hey-releases/hey_lin
 # install speedtest cli from 
 # https://www.speedtest.net/apps/cli
 RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash && \
-    apt-get install -y speedtest
+    apt-get install -y --no-install-recommends speedtest
 
 # add httpstat script
 RUN curl -s https://raw.githubusercontent.com/b4b4r07/httpstat/master/httpstat.sh >/usr/bin/httpstat && chmod a+x /usr/bin/httpstat
 
 # install AZ cli
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash && \
-    apt-get install -y azure-cli
+    apt-get install -y --no-install-recommends azure-cli && \
+    /opt/az/bin/python3 -m pip install --quiet --upgrade \
+        "PyJWT>=2.12.0" \
+        "cryptography>=46.0.5" \
+        "pyOpenSSL>=26.0.0"
 
 ENTRYPOINT [ "/bin/bash" ]
