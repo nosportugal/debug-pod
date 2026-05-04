@@ -126,7 +126,7 @@ RUN curl -SsL https://packages.httpie.io/deb/KEY.gpg | gpg --dearmor -o /usr/sha
     apt-get install -y httpie
 
 # for hey 
-RUN curl -Lv -o /usr/bin/hey https://hey-release.s3.us-east-2.amazonaws.com/hey_linux_amd64 && \
+RUN curl -Lv -o /usr/bin/hey https://storage.googleapis.com/hey-releases/hey_linux_amd64 && \
     chmod a+x /usr/bin/hey
 
 # install speedtest cli from 
