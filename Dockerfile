@@ -6,8 +6,8 @@ FROM debian:13 AS builder
 
 WORKDIR /opt
 
-ARG CURL_VERSION=curl-8_18_0
-ARG NGTCP2_VERSION=v1.20.0
+ARG CURL_VERSION=curl-8_20_0
+ARG NGTCP2_VERSION=v1.22.1
 ARG NGHTTP3_VERSION=v1.15.0
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
@@ -48,7 +48,7 @@ RUN git clone https://github.com/curl/curl && \
 FROM debian:13-slim
 
 # Specify the version of crictl to install
-ARG CRICTL_VERSION="v1.33.0"
+ARG CRICTL_VERSION="v1.36.0"
 
 LABEL org.opencontainers.image.source=https://github.com/nosportugal/debug-pod
 LABEL org.opencontainers.image.description="A debian image with some debugging tools installed."
