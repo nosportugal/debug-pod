@@ -125,9 +125,11 @@ RUN curl -SsL https://packages.httpie.io/deb/KEY.gpg | gpg --dearmor -o /usr/sha
     apt-get update && \
     apt-get install -y --no-install-recommends httpie
 
-# for hey 
-RUN curl -Lv -o /usr/bin/hey https://storage.googleapis.com/hey-releases/hey_linux_amd64 && \
-    chmod a+x /usr/bin/hey
+# for oha
+ARG OHA_VERSION="v1.14.0"
+RUN ARCH=$(dpkg --print-architecture) && \
+    curl -L -o /usr/bin/oha https://github.com/hatoo/oha/releases/download/${OHA_VERSION}/oha-linux-${ARCH} && \
+    chmod a+x /usr/bin/oha
 
 # install speedtest cli from 
 # https://www.speedtest.net/apps/cli
